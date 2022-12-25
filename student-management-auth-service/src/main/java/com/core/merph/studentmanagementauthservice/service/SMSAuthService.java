@@ -5,6 +5,7 @@ import com.core.merph.studentmanagementauthservice.dto.auth.AuthResponseDTO;
 import com.core.merph.studentmanagementauthservice.dto.auth.KeycloakAuthRequestDTO;
 import com.core.merph.studentmanagementauthservice.dto.auth.KeycloakAuthResponseDTO;
 import com.core.merph.studentmanagementauthservice.exception.AuthenticationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Date;
  */
 
 @Service
+@Slf4j
 public class SMSAuthService implements AuthService{
 
     //TODO : Add logger
@@ -41,12 +43,11 @@ public class SMSAuthService implements AuthService{
 
                 KeycloakAuthResponseDTO keycloakAuthResponseDTO = keycloakService.authenticateKeycloakUser(keycloakAuthRequestDTO);
 
-                //TODO : Add log message
                 authResponseDTO.setAuthToken(keycloakAuthResponseDTO.getToken());
 
         }catch (Exception ex){
-            //TODO : Add log message
-            throw new AuthenticationException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            log.error("Error occurred while authenticating user with error : {}", ex.getMessage());
+            throw new AuthenticationException(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         return authResponseDTO;
